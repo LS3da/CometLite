@@ -808,73 +808,11 @@ async def delete_slash_error(interaction: discord.Interaction, error: app_comman
 
 # （/reactionコマンドのイベント関数の下、Bot起動の bot.run の上あたりに追加）
 
-# メッセージが投稿されるたびに呼び出される「守護者」イベント
-@bot.event
-async def on_message(message):
-    # 1. Bot自身のメッセージ、およびコマンド処理は無視
-    if message.author.bot:
-        return
-
-    # 💡 スラッシュコマンドではなく、レガシーコマンド（!）をチェックする（必要に応じて）
-    await bot.process_commands(message) 
-
-    # --------------------------------------------------------------------
-    # 2. チャンネル・ホワイトリストによる「最優先の出口」チェック
-    # --------------------------------------------------------------------
-    if WHITE_CHANNEL_READY and message.channel.id in WHITE_CHANNEL_IDS:
-        # 規制対象外のチャンネルなので、処理を即座に終了！
-        # print(f"✅ チャンネルID {message.channel.id} はホワイトリストのため、フィルタをスキップします。") # ログが多すぎるのでコメントアウト
-        return 
-    
-    # --------------------------------------------------------------------
-    # 3. 禁止ワードフィルター（Black/Whiteリスト）チェック
-    # --------------------------------------------------------------------
-    if not BADWORDS_READY:
-        return
-        
-    content = message.content.lower() 
-    
-    for badword in BADWORDS_LIST:
-        target_word = badword.lower()
-
-        # 1. 究極のパワープレイ：部分一致で一発検知
-        if target_word in content:
-            
-            # 2. 門番のチェック：このメッセージはホワイトリストに守られているか？
-            is_safe = False
-            if WHITELIST_READY:
-                for safe_word in WHITELIST_LIST:
-                    if safe_word in content:
-                        # 無害な単語が含まれていたら、今回は見逃す！
-                        is_safe = True
-                        break
-                
-            if is_safe:
-                # print(f"✅ ホワイトリストの単語を含むため、{target_word}の検知をスキップしました。")
-                continue # 処理を中断し、次の禁止ワードのチェックに移る
-
-            # 3. 門番を突破した場合、実行：メッセージを削除
-            try:
-                await message.delete()
-            except (discord.errors.NotFound, discord.errors.Forbidden):
-                pass
-            
-            # 4. 警告DMを送信
-            try:
-                await message.author.send(
-                    f"⚠️ **【警告】** サーバー内で禁止されている単語『{badword}』が含まれていましたので、あなたのメッセージは削除されました。"
-                )
-            except discord.Forbidden:
-                pass
-                
-            # 5. 処理を終了 (一つでも禁止ワードが見つかれば、メッセージは削除済みなのでOK)
-            return
-
-
 
 
 # Botの起動
 bot.run(os.environ['DISCORD_BOT_TOKEN'])
+
 
 
 
