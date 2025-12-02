@@ -10,8 +10,10 @@ import re
 import asyncio
 import unicodedata
 
+
 # !コマンドとの決別
 bot = commands.Bot(command_prefix=' ', intents=discord.Intents.all())
+
 
 # ======================= マルコフ連鎖モデルの準備 =======================
 MODEL_READY = False
@@ -32,6 +34,7 @@ try:
 except Exception as e:
     print(f"マルコフモデルの構築中にエラーが発生しました: {e}")
 # =====================================================================
+# =======================================================================
 
 @bot.event
 async def on_ready():
@@ -44,7 +47,7 @@ async def on_ready():
         print(f"スラッシュコマンドの同期に失敗しました: {e}")
 
 # ======================= ここからがスラッシュコマンドです =======================
-# 
+
 # ============================================================================
 
 
@@ -565,7 +568,7 @@ async def help_slash(interaction: discord.Interaction):
             ("`/callmes`", "通話チャンネルへの参加を促します。（召集令状）"),
             ("`/roll`", "ダイスを振ります。(例: 1d100)"),
             ("`/buttonroll`", "ボタンダイスを出現させます。(例: 1d100)"),
-            ("`/ticket`", "管理者との会話チャンネルを立ち上げます。"),
+            ("`/ticket`", "管理者との会話チャンネルを作成"),
         ]),
     ]
     
@@ -669,29 +672,5 @@ async def delete_slash_error(interaction: discord.Interaction, error: app_comman
         # その他のエラーは、優しく対処
         await interaction.response.send_message("一掃する巻物の詠唱に失敗しました。", ephemeral=True)
 
-# （/reactionコマンドのイベント関数の下、Bot起動の bot.run の上あたりに追加）
-
-
-
 # Botの起動
 bot.run(os.environ['DISCORD_BOT_TOKEN'])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
