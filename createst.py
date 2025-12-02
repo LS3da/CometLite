@@ -59,44 +59,6 @@ except Exception as e:
     print(f"マルコフモデルの構築中にエラーが発生しました: {e}")
 # =====================================================================
 
-# ======================= 禁止ワードリストの準備 =======================
-BADWORDS_LIST = []
-try:
-    with open("badwords.txt", encoding="utf-8") as f:
-        # 改行と空行を削除してリスト化
-        BADWORDS_LIST = [word.strip() for word in f.readlines() if word.strip()]
-    print(f"禁止ワードリストの読み込みに成功しました。({len(BADWORDS_LIST)}個)")
-    BADWORDS_READY = True
-except FileNotFoundError:
-    print("禁止ワードファイル 'badwords.txt' が見つかりません。禁止ワードフィルタは無効です。")
-    BADWORDS_READY = False
-# =====================================================================
-
-# ======================= ホワイトリストの準備 =======================
-WHITELIST_LIST = []
-try:
-    with open("whitelist.txt", encoding="utf-8") as f:
-        WHITELIST_LIST = [word.strip().lower() for word in f.readlines() if word.strip()]
-    print(f"ホワイトリストの読み込みに成功しました。({len(WHITELIST_LIST)}個)")
-    WHITELIST_READY = True
-except FileNotFoundError:
-    print("ホワイトリストファイル 'whitelist.txt' が見つかりません。ホワイトリスト機能は無効です。")
-    WHITELIST_READY = False
-# =======================================================================
-
-# ======================= ホワイトチャンネルリストの準備 =======================
-WHITE_CHANNEL_IDS = []
-try:
-    with open("whitechannel.txt", encoding="utf-8") as f:
-        # IDを整数型に変換してリスト化
-        WHITE_CHANNEL_IDS = [int(line.strip()) for line in f.readlines() if line.strip() and line.strip().isdigit()]
-    print(f"ホワイトチャンネルリストの読み込みに成功しました。({len(WHITE_CHANNEL_IDS)}個)")
-    WHITE_CHANNEL_READY = True
-except FileNotFoundError:
-    print("ホワイトチャンネルファイル 'whitechannel.txt' が見つかりません。チャンネルフィルタは無効です。")
-    WHITE_CHANNEL_READY = False
-# =======================================================================
-
 @bot.event
 async def on_ready():
     print(f'Login OK: {bot.user} (ID: {bot.user.id})')
@@ -683,11 +645,6 @@ async def help_slash(interaction: discord.Interaction):
     # 💡 Botの「記憶」に、全てのコマンド情報を持たせる
     #    このリストは、あなたの提供してくださった情報から作成しました。
     commands_list = [
-        ("【AI・知識】賢者の知恵と戦略", [
-            ("`/gemini`", "ある程度のことを、豊かに説明。（安定版Gemini）"),
-            ("`/think`", "ほとんどのことにおいて、論理的に深く考える。（戦略家）"),
-            ("`/geminilite`", "超軽量なモデルに質問。（最速応答）"),
-        ]),
         ("【創作・詩人】言葉と運勢", [
             ("`/marukofu`", "知っていることを、ミックスして識る。（通常）"),
             ("`/marukofulong`", "マルコフ連鎖の言葉を、より長く。（長文モード）"),
@@ -703,6 +660,7 @@ async def help_slash(interaction: discord.Interaction):
             ("`/callmes`", "通話チャンネルへの参加を促します。（召集令状）"),
             ("`/roll`", "ダイスを振ります。(例: 1d100)"),
             ("`/buttonroll`", "ボタンダイスを出現させます。(例: 1d100)"),
+            ("`/ticket`", "管理者との会話チャンネルを立ち上げます。"),
         ]),
     ]
     
@@ -812,6 +770,7 @@ async def delete_slash_error(interaction: discord.Interaction, error: app_comman
 
 # Botの起動
 bot.run(os.environ['DISCORD_BOT_TOKEN'])
+
 
 
 
